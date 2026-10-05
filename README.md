@@ -73,65 +73,111 @@ It reads real-time sensors, extracts structured intents using natural language p
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Steps to Reproduce & Run
 
-### 1. Requirements
-- Python 3.10+ (tested on Python 3.13)
-- Optional for Hardware: Arduino Uno, ESP32, MQ-2 Gas sensor, LM35 Temp sensor, Capacitive soil sensor, SG90 Servo, SSD1306 OLED, RC522 RFID reader.
+Follow these step-by-step instructions to set up and reproduce the BAT POD system from scratch on any machine (Windows, Linux, or macOS).
 
-### 2. Setup Environment
+### 1. Clone the Repository
 ```bash
-# Clone repository
-git clone <repo-url>
-cd iqoo_hack
+git clone https://github.com/sufiyan-cyber/iqoo_GF.git
+cd iqoo_GF
+```
 
-# Install dependencies
+### 2. Set Up Python Virtual Environment
+We recommend Python 3.10, 3.11, 3.12, or 3.13:
+
+**On Windows (PowerShell):**
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+**On Linux / macOS:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
+```
 
-# Create environment file from template
+### 4. Configure Environment
+Copy the environment template:
+```bash
+# On Windows PowerShell
+Copy-Item .env.example .env
+
+# On Linux / macOS
 cp .env.example .env
 ```
+*(Default settings are pre-configured to run immediately in Simulation/Mock mode).*
 
-### 3. Run in Simulation / Mock Mode
-No hardware connected? You can run the complete interactive simulation immediately:
+---
 
+### 5. Run the Test Suite (Verification)
+Execute the complete test suite across sensors, safety rules, RBAC authorization, closed-loop verification, and the Golden Path:
 ```bash
-# Launch interactive terminal shell
-python main.py --mode=mock --interactive
+python -m pytest -v
 ```
-
-Inside the interactive shell:
+**Expected Output:**
 ```text
-bat-pod> status
-bat-pod> tap CARD_ADMIN_001
-bat-pod> say Is the environment safe?
-bat-pod> say Water the plant
-bat-pod> approve
-bat-pod> gas 350
-bat-pod> say What happened?
-bat-pod> history
-```
-
-### 4. Run Automated Golden Path MVP Demo
-Run the complete 11-step PRD Golden Path test scenario with one command:
-```bash
-python main.py --demo
-```
-
-### 5. Run in Physical Hardware Mode
-Connect your Arduino Uno and ESP32 via USB and run:
-```bash
-python main.py --mode=hardware --arduino-port=COM3 --esp32-port=COM4
+============================= 33 passed in 0.27s ==============================
 ```
 
 ---
 
-## 🧪 Running Automated Tests
-
-Run the test suite covering sensors, safety rules, RBAC authorization, hardware verification, AI intent extraction, and the Golden Path:
-
+### 6. Run the Automated MVP Golden Path Demo
+Run the complete 11-step end-to-end scenario specified in `BAT_POD_PRD.md`:
 ```bash
-pytest -v
+python main.py --demo
+```
+This automatically demonstrates:
+1. **RFID Tap**: Identifies Admin card user (*Bruce Wayne*).
+2. **Safety Query**: *"BAT POD, is the environment safe?"* -> Evaluates temperature, gas, and soil moisture context.
+3. **Action Request**: *"Water the plant."* -> Generates human confirmation request with soil context.
+4. **Approval**: User approves -> Pump/servo triggers with physical verification (`VERIFIED_SUCCESS`).
+5. **Emergency Simulation**: Gas sensor spikes to 350 PPM (> 300 PPM threshold) -> Autonomous safe-state closure of valve, alarm ON, and emergency OLED display.
+6. **Explanation Query**: *"What happened?"* -> Retrieves SQLite audit log and explains the hazard.
+7. **Audit Log Inspection**: Outputs the SQLite records table.
+
+---
+
+### 7. Run the Interactive Simulation Shell
+Interact live with BAT POD without requiring physical microcontrollers:
+```bash
+python main.py --mode=mock --interactive
+```
+
+**Interactive Shell Commands:**
+```text
+bat-pod> status                      # View current sensors, OLED display, and active user
+bat-pod> tap CARD_ADMIN_001          # Tap Admin RFID card
+bat-pod> tap CARD_WORKER_002         # Tap Worker RFID card
+bat-pod> say Is the environment safe?# Ask environmental status
+bat-pod> say Water the plant         # Issue action command
+bat-pod> approve                     # Confirm pending action
+bat-pod> gas 350                     # Trigger emergency gas leak simulation (> 300 PPM)
+bat-pod> say What happened?          # Ask for incident explanation
+bat-pod> history                     # View recent SQLite audit log records
+bat-pod> demo                        # Run automated golden path demo
+bat-pod> help                        # View command list
+bat-pod> quit                        # Exit shell
+```
+
+---
+
+### 8. Run in Real Hardware Mode (Physical Microcontrollers)
+When deploying to physical hardware:
+
+1. **Flash Arduino Uno**: Open `firmware/arduino_sensor_hub/arduino_sensor_hub.ino` in Arduino IDE and upload to Arduino Uno.
+2. **Flash ESP32**: Open `firmware/esp32_gateway/esp32_gateway.ino` in Arduino IDE and upload to ESP32.
+3. **Wire Hardware**: Connect sensors and UART pins according to [HARDWARE_WIRING.md](docs/HARDWARE_WIRING.md).
+4. **Start BAT POD**:
+```bash
+python main.py --mode=hardware --arduino-port=COM3 --esp32-port=COM4
 ```
 
 ---
@@ -171,6 +217,7 @@ pytest -v
 ├── tests/                   # Comprehensive unit and integration test suite
 ├── main.py                  # CLI runner supporting --mode=mock and --mode=hardware
 ├── requirements.txt         # Python dependencies
+├── pytest.ini               # Pytest path configurations
 └── .env.example             # Configuration template
 ```
 
