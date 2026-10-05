@@ -118,18 +118,36 @@ cp .env.example .env
 ---
 
 ### 5. Run the Test Suite (Verification)
-Execute the complete test suite across sensors, safety rules, RBAC authorization, closed-loop verification, and the Golden Path:
+Execute the complete test suite across sensors, safety rules, RBAC authorization, closed-loop verification, AI intent extraction, and the Web API:
 ```bash
 python -m pytest -v
 ```
 **Expected Output:**
 ```text
-============================= 33 passed in 0.27s ==============================
+============================= 39 passed in 0.82s ==============================
 ```
 
 ---
 
-### 6. Run the Automated MVP Golden Path Demo
+### 6. Run the Organic / Natural Web Companion UI
+BAT POD features a tactile **Organic / Natural (Wabi-Sabi)** Web Companion UI built with:
+- **Earth-drawn color palette**: Rice Paper (`#FDFCF8`), Moss Green (`#5D7052`), Terracotta (`#C18C5D`), Sand (`#E6DCCD`), and Raw Timber (`#DED8CF`).
+- **Warm Typography**: *Fraunces* soft variable serif headings and *Nunito* rounded sans-serif body.
+- **Physical Texture**: Global paper grain/noise overlay with multiply blend mode.
+- **Organic Geometry**: Amorphous blob backgrounds and asymmetric cards with varied border radii.
+- **Live Real-time Telemetry & Actuation**: Monitor live sensor gauges, tap simulated RFID cards, issue voice commands, trigger gas leak tests, and approve pending actions.
+
+**Launch the Web Server:**
+```bash
+python main.py --web --web-port=8000
+```
+Open **[http://localhost:8000](http://localhost:8000)** in your browser.
+
+*(You can also directly double-click or open `web/index.html` in any modern web browser to interact with the client-side simulator).*
+
+---
+
+### 7. Run the Automated MVP Golden Path Demo
 Run the complete 11-step end-to-end scenario specified in `BAT_POD_PRD.md`:
 ```bash
 python main.py --demo
@@ -145,8 +163,8 @@ This automatically demonstrates:
 
 ---
 
-### 7. Run the Interactive Simulation Shell
-Interact live with BAT POD without requiring physical microcontrollers:
+### 8. Run the Interactive Simulation Shell
+Interact live with BAT POD via the terminal without requiring physical microcontrollers:
 ```bash
 python main.py --mode=mock --interactive
 ```
@@ -169,7 +187,7 @@ bat-pod> quit                        # Exit shell
 
 ---
 
-### 8. Run in Real Hardware Mode (Physical Microcontrollers)
+### 9. Run in Real Hardware Mode (Physical Microcontrollers)
 When deploying to physical hardware:
 
 1. **Flash Arduino Uno**: Open `firmware/arduino_sensor_hub/arduino_sensor_hub.ino` in Arduino IDE and upload to Arduino Uno.

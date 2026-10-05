@@ -368,6 +368,8 @@ def main():
     parser.add_argument("--baud", type=int, default=settings.ARDUINO_BAUD, help="Serial baud rate")
     parser.add_argument("--interactive", action="store_true", help="Launch interactive terminal shell")
     parser.add_argument("--demo", action="store_true", help="Run automated Golden Path demo and exit")
+    parser.add_argument("--web", action="store_true", help="Launch Organic Web Companion UI and API")
+    parser.add_argument("--web-port", type=int, default=8000, help="Port to bind Web Companion UI (default: 8000)")
 
     args = parser.parse_args()
 
@@ -384,6 +386,15 @@ def main():
             sys.exit(1)
         success = run_golden_path_demo(controller, mocks)
         sys.exit(0 if success else 1)
+
+    if args.web:
+        import uvicorn
+        from bat_pod.web_api import create_app
+
+        app = create_app(controller=controller, mocks=mocks)
+        console.print(f"[bold green]Starting BAT POD Organic Web Companion on http://localhost:{args.web_port}...[/]")
+        uvicorn.run(app, host="0.0.0.0", port=args.web_port, log_level="info")
+        return
 
     if args.interactive or len(sys.argv) == 1:
         run_interactive_shell(controller, mocks)

@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BAT POD — A Physical AI Companion for Smart Living</title>
+
+  <!-- Google Fonts: Fraunces (Variable Soft Serif) & Nunito (Rounded Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..700&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Custom Configuration for Organic / Natural Design System -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: '#FDFCF8',
+            foreground: '#2C2C24',
+            primary: {
+              DEFAULT: '#5D7052',
+              foreground: '#F3F4F1',
+              hover: '#4C5D42',
+              light: '#5D7052/15'
+            },
+            secondary: {
+              DEFAULT: '#C18C5D',
+              foreground: '#FFFFFF',
+              hover: '#A97548',
+              light: '#C18C5D/15'
+            },
+            accent: {
+              DEFAULT: '#E6DCCD',
+              foreground: '#4A4A40'
+            },
+            muted: {
+              DEFAULT: '#F0EBE5',
+              foreground: '#78786C'
+            },
+            border: '#DED8CF',
+            destructive: '#A85448',
+            loam: '#2C2C24',
+            timber: '#DED8CF',
+            moss: '#5D7052',
+            terracotta: '#C18C5D',
+            sand: '#E6DCCD',
+            stone: '#F0EBE5'
+          },
+          fontFamily: {
+            heading: ['Fraunces', 'serif'],
+            body: ['Nunito', 'sans-serif'],
+          },
+          boxShadow: {
+            'soft': '0 4px 20px -2px rgba(93, 112, 82, 0.15)',
+            'float': '0 10px 40px -10px rgba(193, 140, 93, 0.2)',
+            'lift': '0 20px 40px -10px rgba(93, 112, 82, 0.15)',
+            'clay': '0 8px 30px -4px rgba(193, 140, 93, 0.25)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Global Paper Noise Texture Overlay */
+    body {
+      background-color: #FDFCF8;
+      color: #2C2C24;
+      font-family: 'Nunito', sans-serif;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-grain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.038;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* Organic Blob Border Radii */
+    .blob-shape-1 {
+      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+    .blob-shape-2 {
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    }
+    .blob-shape-3 {
+      border-radius: 50% 50% 30% 70% / 50% 60% 40% 50%;
+    }
+    .blob-shape-4 {
+      border-radius: 70% 30% 50% 50% / 40% 60% 40% 60%;
+    }
+
+    /* Asymmetric Card Corner Classes */
+    .card-asym-1 { border-radius: 4rem 2rem 2rem 2rem; }
+    .card-asym-2 { border-radius: 2rem 4rem 2rem 2rem; }
+    .card-asym-3 { border-radius: 2rem 2rem 4rem 2rem; }
+    .card-asym-4 { border-radius: 2rem 2rem 2rem 4rem; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F0EBE5;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #DED8CF;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #C18C5D;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-[#2C2C24] selection:bg-[#5D7052]/20 selection:text-[#2C2C24]">
+
+  <!-- Global Grain Texture Layer -->
+  <div class="bg-grain" aria-hidden="true"></div>
+
+  <!-- Ambient Blurred Background Blobs -->
+  <div class="fixed top-[-10%] left-[-5%] w-[45vw] h-[45vw] bg-[#5D7052]/10 blob-shape-1 blur-3xl pointer-events-none -z-10 animate-pulse" style="animation-duration: 12s;"></div>
+  <div class="fixed top-[30%] right-[-8%] w-[50vw] h-[50vw] bg-[#C18C5D]/10 blob-shape-2 blur-3xl pointer-events-none -z-10 animate-pulse" style="animation-duration: 16s;"></div>
+  <div class="fixed bottom-[-10%] left-[20%] w-[40vw] h-[40vw] bg-[#E6DCCD]/25 blob-shape-3 blur-3xl pointer-events-none -z-10 animate-pulse" style="animation-duration: 14s;"></div>
+
+  <!-- STICKY FLOATING PILL NAVIGATION -->
+  <header class="sticky top-4 z-50 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+    <nav class="flex items-center justify-between px-6 py-3.5 bg-white/70 backdrop-blur-md rounded-full border border-[#DED8CF]/60 shadow-soft transition-all duration-300">
+      
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="h-10 w-10 rounded-full bg-[#5D7052] flex items-center justify-center text-white shadow-sm transition-transform duration-300 group-hover:scale-105">
+          <i data-lucide="shield-leaf" class="w-5 h-5 text-[#F3F4F1]"></i>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-heading font-bold text-xl tracking-tight text-[#2C2C24]">BAT POD</span>
+          <span class="text-[10px] uppercase tracking-widest text-[#78786C] font-semibold">Physical AI</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-[#78786C]">
+        <a href="#monitor" class="hover:text-[#5D7052] transition-colors duration-200">Live Companion</a>
+        <a href="#how-it-works" class="hover:text-[#5D7052] transition-colors duration-200">How It Works</a>
+        <a href="#features" class="hover:text-[#5D7052] transition-colors duration-200">Capabilities</a>
+        <a href="#safety" class="hover:text-[#5D7052] transition-colors duration-200">Safety Policy</a>
+        <a href="#audit" class="hover:text-[#5D7052] transition-colors duration-200">Audit Logs</a>
+      </div>
+
+      <!-- Action Button & Connection Pill -->
+      <div class="flex items-center gap-3">
+        <div id="conn-badge" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#5D7052]/10 text-[#5D7052] border border-[#5D7052]/20">
+          <span class="w-2 h-2 rounded-full bg-[#5D7052] animate-ping"></span>
+          <span>Simulation Active</span>
+        </div>
+        <a href="#monitor" class="px-5 py-2.5 rounded-full bg-[#5D7052] text-[#F3F4F1] font-bold text-sm shadow-soft hover:bg-[#4C5D42] hover:scale-105 active:scale-95 transition-all duration-300">
+          Live Monitor
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="relative pt-20 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
+      <div class="grid lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left Content -->
+        <div class="lg:col-span-7 flex flex-col items-start gap-6">
+          
+          <!-- Natural Organic Badge -->
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E6DCCD]/50 border border-[#DED8CF] text-xs font-bold text-[#4A4A40] shadow-sm">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#C18C5D]"></i>
+            <span>Wabi-Sabi Physical AI Companion</span>
+          </div>
+
+          <!-- Headline (Fraunces Serif) -->
+          <h1 class="font-heading font-extrabold text-5xl sm:text-6xl lg:text-7xl leading-[1.08] text-[#2C2C24]">
+            Grounded sensing, <span class="italic font-normal text-[#5D7052]">thoughtful</span> action.
+          </h1>
+
+          <!-- Body Text (Nunito) -->
+          <p class="text-lg sm:text-xl text-[#78786C] font-normal leading-relaxed max-w-2xl">
+            BAT POD bridges the gap between environmental awareness and physical intervention. It senses through real sensors, understands voice locally, enforces deterministic safety rules, and verifies every mechanical motion.
+          </p>
+
+          <!-- Core Principle Quote Card -->
+          <div class="p-5 rounded-2xl bg-[#F0EBE5]/50 border border-[#DED8CF]/70 text-sm italic text-[#4A4A40] flex items-start gap-3 w-full max-w-xl">
+            <i data-lucide="quote" class="w-5 h-5 text-[#C18C5D] shrink-0 mt-0.5"></i>
+            <div>
+              <span class="font-bold not-italic text-[#2C2C24]">Core Tenet: </span>
+              "AI should interpret. Rules should authorize. Hardware should verify."
+            </div>
+          </div>
+
+          <!-- Hero Buttons -->
+          <div class="flex flex-wrap items-center gap-4 pt-2">
+            <button onclick="scrollToConsole()" class="px-8 h-12 rounded-full bg-[#5D7052] text-[#F3F4F1] font-bold text-base shadow-soft hover:shadow-lift hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2">
+              <i data-lucide="radio" class="w-4 h-4"></i>
+              Launch Live Console
+            </button>
+            <button onclick="runAutoGoldenPath()" class="px-8 h-12 rounded-full border-2 border-[#C18C5D] text-[#C18C5D] font-bold text-base hover:bg-[#C18C5D]/10 hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2">
+              <i data-lucide="play-circle" class="w-4 h-4"></i>
+              Run Golden Path Demo
+            </button>
+          </div>
+
+          <!-- Quick Stats / Pill Features -->
+          <div class="grid grid-cols-3 gap-6 pt-6 border-t border-[#DED8CF]/60 w-full max-w-xl">
+            <div>
+              <div class="font-heading font-bold text-2xl text-[#2C2C24]">100%</div>
+              <div class="text-xs text-[#78786C] font-semibold">Offline-First Safety</div>
+            </div>
+            <div>
+              <div class="font-heading font-bold text-2xl text-[#5D7052]">&lt; 1 sec</div>
+              <div class="text-xs text-[#78786C] font-semibold">Emergency Cutoff</div>
+            </div>
+            <div>
+              <div class="font-heading font-bold text-2xl text-[#C18C5D]">Closed-Loop</div>
+              <div class="text-xs text-[#78786C] font-semibold">Hardware Verified</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Hero Interactive Graphic -->
+        <div class="lg:col-span-5 relative">
+          <!-- Ambient Blob Behind Card -->
+          <div class="absolute inset-0 bg-[#C18C5D]/20 blob-shape-4 blur-2xl -z-10"></div>
+          
+          <!-- Organic Handcrafted Device Showcase Card -->
+          <div class="card-asym-1 bg-[#FEFEFA] p-8 border border-[#DED8CF]/80 shadow-float relative transition-all duration-500 hover:-translate-y-1">
+            
+            <div class="flex items-center justify-between pb-6 border-b border-[#DED8CF]/50">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-[#5D7052]"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-[#78786C]">Hardware State</span>
+              </div>
+              <span id="hero-user-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-[#E6DCCD] text-[#4A4A40]">
+                RFID: Admin (Bruce)
+              </span>
+            </div>
+
+            <!-- Simulated Device Display Face -->
+            <div class="my-6 p-6 rounded-3xl bg-[#2C2C24] text-[#F3F4F1] font-mono shadow-inner relative overflow-hidden">
+              <div class="flex items-center justify-between text-xs text-[#78786C] pb-3 border-b border-white/10">
+                <span>BAT-POD-V1</span>
+                <span class="flex items-center gap-1 text-[#5D7052]"><i data-lucide="wifi" class="w-3.5 h-3.5"></i> LOCAL</span>
+              </div>
+              <div class="py-4 space-y-2">
+                <div class="flex justify-between text-sm">
+                  <span class="text-[#78786C]">TEMP:</span>
+                  <span id="hero-temp" class="text-white font-bold">26.0°C</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-[#78786C]">GAS:</span>
+                  <span id="hero-gas" class="text-[#5D7052] font-bold">SAFE (42.0 PPM)</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-[#78786C]">SOIL:</span>
+                  <span id="hero-soil" class="text-white font-bold">21.0%</span>
+                </div>
+              </div>
+              <div class="pt-3 border-t border-white/10 text-xs flex justify-between text-[#78786C]">
+                <span>STATUS</span>
+                <span id="hero-status" class="text-emerald-400 font-semibold">Everything OK</span>
+              </div>
+            </div>
+
+            <!-- Physical Actuator Visualizer -->
+            <div class="grid grid-cols-3 gap-3 text-center">
+              <div class="p-3 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF]">
+                <i data-lucide="gauge" class="w-5 h-5 mx-auto text-[#5D7052] mb-1"></i>
+                <div class="text-[10px] font-bold uppercase text-[#78786C]">Valve Servo</div>
+                <div id="hero-servo" class="text-xs font-bold text-[#2C2C24]">90° (Open)</div>
+              </div>
+              <div class="p-3 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF]">
+                <i data-lucide="droplet" class="w-5 h-5 mx-auto text-[#C18C5D] mb-1"></i>
+                <div class="text-[10px] font-bold uppercase text-[#78786C]">Water Pump</div>
+                <div id="hero-pump" class="text-xs font-bold text-[#2C2C24]">Ready</div>
+              </div>
+              <div class="p-3 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF]">
+                <i data-lucide="bell" class="w-5 h-5 mx-auto text-[#78786C] mb-1"></i>
+                <div class="text-[10px] font-bold uppercase text-[#78786C]">Alarm</div>
+                <div id="hero-alarm" class="text-xs font-bold text-[#2C2C24]">Off</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- LIVE COMPANION CONSOLE (INTERACTIVE TESTING & DEMONSTRATION) -->
+    <section id="monitor" class="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#5D7052]/10 border border-[#5D7052]/20 text-xs font-bold text-[#5D7052] mb-4">
+          <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+          <span>Live Interactive Dashboard</span>
+        </div>
+        <h2 class="font-heading font-bold text-4xl sm:text-5xl text-[#2C2C24]">
+          Real-Time Physical AI Console
+        </h2>
+        <p class="text-[#78786C] text-lg mt-4 font-normal">
+          Directly observe and test the <span class="font-semibold text-[#5D7052]">SENSE ➔ UNDERSTAND ➔ DECIDE ➔ ACT ➔ CONFIRM</span> loop in real-time.
+        </p>
+      </div>
+
+      <!-- Pending Approval Banner (Dynamic) -->
+      <div id="approval-banner" class="hidden mb-10 card-asym-3 bg-[#E6DCCD] p-6 border-2 border-[#C18C5D] shadow-float transition-all duration-300">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+            <div class="h-12 w-12 rounded-full bg-[#C18C5D] text-white flex items-center justify-center shrink-0">
+              <i data-lucide="hand" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="text-xs uppercase font-bold tracking-wider text-[#C18C5D]">Human Confirmation Required</div>
+              <div id="approval-prompt-text" class="font-heading font-bold text-xl text-[#2C2C24]">Water plant? Current soil moisture is 21.0%.</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="submitApproval(true)" class="px-6 py-3 rounded-full bg-[#5D7052] text-white font-bold text-sm shadow-soft hover:scale-105 active:scale-95 transition-all">
+              [ Touch / Approve ]
+            </button>
+            <button onclick="submitApproval(false)" class="px-6 py-3 rounded-full border border-[#78786C] text-[#2C2C24] font-bold text-sm hover:bg-black/5 active:scale-95 transition-all">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Alert Banner (Dynamic) -->
+      <div id="emergency-banner" class="hidden mb-10 card-asym-1 bg-[#A85448]/10 p-6 border-2 border-[#A85448] shadow-float transition-all duration-300">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="h-12 w-12 rounded-full bg-[#A85448] text-white flex items-center justify-center shrink-0 animate-bounce">
+              <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <div class="text-xs uppercase font-bold tracking-wider text-[#A85448]">Deterministic Safety Intervention</div>
+              <div id="emergency-banner-text" class="font-heading font-bold text-xl text-[#2C2C24]">Critical gas leak! Valve automatically shut down & Alarm active.</div>
+            </div>
+          </div>
+          <button onclick="resetGasSimulation()" class="px-6 py-2.5 rounded-full bg-[#A85448] text-white font-bold text-sm shadow hover:scale-105 active:scale-95 transition-all">
+            Clear Hazard & Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN CONSOLE GRID -->
+      <div class="grid lg:grid-cols-12 gap-8">
+        
+        <!-- SENSOR METRICS (Left 7 Cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-8">
+          
+          <!-- 3 Sensor Gauges -->
+          <div class="grid sm:grid-cols-3 gap-6">
+            
+            <!-- Temperature Card -->
+            <div class="card-asym-1 bg-[#FEFEFA] p-6 border border-[#DED8CF]/70 shadow-soft transition-all duration-300 hover:-translate-y-1">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#78786C]">Temperature</span>
+                <div class="w-8 h-8 rounded-full bg-[#5D7052]/10 flex items-center justify-center text-[#5D7052]">
+                  <i data-lucide="thermometer" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <div id="card-temp-val" class="font-heading font-bold text-3xl text-[#2C2C24]">26.0°C</div>
+              <div class="text-xs text-[#78786C] mt-2">Optimal: 18°C – 32°C</div>
+              <div class="mt-4 pt-3 border-t border-[#DED8CF]/40 flex items-center gap-2">
+                <input type="range" min="15" max="60" value="26" class="w-full accent-[#5D7052]" onchange="setSensorVal('temp', this.value)">
+                <span class="text-xs font-bold text-[#78786C] shrink-0">Sim</span>
+              </div>
+            </div>
+
+            <!-- Gas Concentration Card -->
+            <div id="gas-card" class="card-asym-2 bg-[#FEFEFA] p-6 border border-[#DED8CF]/70 shadow-soft transition-all duration-300 hover:-translate-y-1">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#78786C]">Gas Level (MQ)</span>
+                <div id="gas-icon-wrap" class="w-8 h-8 rounded-full bg-[#5D7052]/10 flex items-center justify-center text-[#5D7052]">
+                  <i data-lucide="flame" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <div id="card-gas-val" class="font-heading font-bold text-3xl text-[#2C2C24]">42.0 PPM</div>
+              <div id="card-gas-badge" class="text-xs font-bold text-[#5D7052] mt-2">SAFE (&lt; 150 PPM)</div>
+              <div class="mt-4 pt-3 border-t border-[#DED8CF]/40 flex items-center gap-2">
+                <button onclick="setSensorVal('gas', 45)" class="px-2.5 py-1 rounded-full text-xs font-bold bg-[#5D7052]/10 text-[#5D7052] hover:bg-[#5D7052]/20">Safe</button>
+                <button onclick="setSensorVal('gas', 180)" class="px-2.5 py-1 rounded-full text-xs font-bold bg-[#C18C5D]/15 text-[#C18C5D] hover:bg-[#C18C5D]/25">Warn</button>
+                <button onclick="setSensorVal('gas', 350)" class="px-2.5 py-1 rounded-full text-xs font-bold bg-[#A85448]/15 text-[#A85448] hover:bg-[#A85448]/25">Spike</button>
+              </div>
+            </div>
+
+            <!-- Soil Moisture Card -->
+            <div class="card-asym-3 bg-[#FEFEFA] p-6 border border-[#DED8CF]/70 shadow-soft transition-all duration-300 hover:-translate-y-1">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-[#78786C]">Soil Moisture</span>
+                <div class="w-8 h-8 rounded-full bg-[#C18C5D]/10 flex items-center justify-center text-[#C18C5D]">
+                  <i data-lucide="sprout" class="w-4 h-4"></i>
+                </div>
+              </div>
+              <div id="card-soil-val" class="font-heading font-bold text-3xl text-[#2C2C24]">21.0%</div>
+              <div class="text-xs text-[#C18C5D] font-bold mt-2">Low — Needs Water</div>
+              <div class="mt-4 pt-3 border-t border-[#DED8CF]/40 flex items-center gap-2">
+                <input type="range" min="5" max="95" value="21" class="w-full accent-[#C18C5D]" onchange="setSensorVal('soil', this.value)">
+                <span class="text-xs font-bold text-[#78786C] shrink-0">Sim</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- VOICE / INTENT SIMULATION BAR -->
+          <div class="card-asym-4 bg-[#FEFEFA] p-6 sm:p-8 border border-[#DED8CF]/80 shadow-soft">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-[#5D7052] text-white flex items-center justify-center">
+                  <i data-lucide="mic" class="w-3.5 h-3.5"></i>
+                </div>
+                <h3 class="font-heading font-bold text-xl text-[#2C2C24]">Voice & Intent Processor</h3>
+              </div>
+              <span class="text-xs text-[#78786C] font-semibold">Local Parsing • No Cloud Lag</span>
+            </div>
+
+            <p class="text-sm text-[#78786C] mb-4">
+              Speak or type a command. The Intent Parser extracts parameters, evaluates context, and checks RBAC authorization:
+            </p>
+
+            <!-- Quick Pill Chips -->
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button onclick="sendVoiceText('Is the environment safe?')" class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#F0EBE5] text-[#4A4A40] border border-[#DED8CF] hover:bg-[#5D7052] hover:text-white transition-all">
+                "Is the environment safe?"
+              </button>
+              <button onclick="sendVoiceText('Water the plant.')" class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#F0EBE5] text-[#4A4A40] border border-[#DED8CF] hover:bg-[#5D7052] hover:text-white transition-all">
+                "Water the plant."
+              </button>
+              <button onclick="sendVoiceText('What happened?')" class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#F0EBE5] text-[#4A4A40] border border-[#DED8CF] hover:bg-[#5D7052] hover:text-white transition-all">
+                "What happened?"
+              </button>
+              <button onclick="sendVoiceText('Does the plant need water?')" class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#F0EBE5] text-[#4A4A40] border border-[#DED8CF] hover:bg-[#5D7052] hover:text-white transition-all">
+                "Does the plant need water?"
+              </button>
+            </div>
+
+            <!-- Custom Input Box -->
+            <form onsubmit="handleVoiceSubmit(event)" class="flex items-center gap-3">
+              <input type="text" id="voice-input" placeholder="Type command in English or Kannada (e.g., 'Water the plant' or 'Is it safe?')..." class="flex-1 h-12 px-6 rounded-full bg-white/70 border border-[#DED8CF] text-sm text-[#2C2C24] placeholder:text-[#78786C] focus:outline-none focus:ring-2 focus:ring-[#5D7052]/30 focus:border-[#5D7052] transition-all">
+              <button type="submit" class="h-12 px-7 rounded-full bg-[#5D7052] text-[#F3F4F1] font-bold text-sm shadow-soft hover:bg-[#4C5D42] hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                <span>Send</span>
+                <i data-lucide="send" class="w-4 h-4"></i>
+              </button>
+            </form>
+
+            <!-- Spoken Output Response Box -->
+            <div id="voice-response-card" class="mt-5 p-4 rounded-2xl bg-[#F0EBE5]/50 border border-[#DED8CF]/60 text-sm flex items-start gap-3">
+              <i data-lucide="volume-2" class="w-5 h-5 text-[#5D7052] shrink-0 mt-0.5"></i>
+              <div class="flex-1">
+                <span class="text-xs font-bold uppercase text-[#78786C] block mb-0.5">BAT POD Spoken Response</span>
+                <p id="voice-response-text" class="text-[#2C2C24] font-medium italic">
+                  "Ready for voice interactions. Tap an authorized RFID card or issue an inquiry."
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- RFID USER ACCESS CONTROL -->
+          <div class="card-asym-2 bg-[#FEFEFA] p-6 border border-[#DED8CF]/80 shadow-soft">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <i data-lucide="id-card" class="w-5 h-5 text-[#C18C5D]"></i>
+                <h3 class="font-heading font-bold text-lg text-[#2C2C24]">RFID Access Control (RBAC)</h3>
+              </div>
+              <span id="active-user-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-[#5D7052]/15 text-[#5D7052]">
+                Active: Bruce Wayne (Admin)
+              </span>
+            </div>
+            <p class="text-xs text-[#78786C] mb-4">
+              Simulate presenting physical RFID keys. Unauthenticated guests cannot trigger actuators.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <button onclick="tapCard('CARD_ADMIN_001')" class="px-4 py-2 rounded-full text-xs font-bold bg-[#E6DCCD] hover:bg-[#5D7052] hover:text-white transition-all flex items-center gap-2">
+                <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+                Admin (CARD_ADMIN_001)
+              </button>
+              <button onclick="tapCard('CARD_WORKER_002')" class="px-4 py-2 rounded-full text-xs font-bold bg-[#E6DCCD] hover:bg-[#5D7052] hover:text-white transition-all flex items-center gap-2">
+                <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
+                Worker (CARD_WORKER_002)
+              </button>
+              <button onclick="tapCard('UNKNOWN_HEX')" class="px-4 py-2 rounded-full text-xs font-bold bg-[#E6DCCD] hover:bg-[#A85448] hover:text-white transition-all flex items-center gap-2">
+                <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+                Guest / Unknown Card
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: OLED DISPLAY & ACTUATOR VERIFICATION (5 Cols) -->
+        <div class="lg:col-span-5 flex flex-col gap-8">
+          
+          <!-- Physical OLED Screen Simulation -->
+          <div class="card-asym-1 bg-[#FEFEFA] p-6 border border-[#DED8CF]/80 shadow-soft">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <i data-lucide="tv" class="w-5 h-5 text-[#5D7052]"></i>
+                <h3 class="font-heading font-bold text-lg text-[#2C2C24]">Physical OLED Display</h3>
+              </div>
+              <span id="oled-state-tag" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#5D7052]/10 text-[#5D7052]">
+                NORMAL STATE
+              </span>
+            </div>
+
+            <!-- Virtual 128x64 OLED Screen -->
+            <div class="rounded-3xl bg-[#1B1B17] border-4 border-[#2C2C24] p-5 font-mono text-[#F3F4F1] shadow-2xl relative">
+              <div class="text-[10px] text-white/40 flex justify-between pb-2 border-b border-white/10">
+                <span>SSD1306 128x64</span>
+                <span class="text-emerald-400">● LIVE</span>
+              </div>
+              <pre id="oled-screen-ascii" class="text-xs leading-relaxed py-3 font-mono whitespace-pre text-emerald-400">
+┌────────────────────────────────┐
+│            BAT POD             │
+├────────────────────────────────┤
+│ TEMP       26.0°C              │
+│ GAS        SAFE                │
+│ SOIL       21.0%               │
+│                                │
+│ STATUS                         │
+│ Everything OK                  │
+└────────────────────────────────┘
+              </pre>
+            </div>
+          </div>
+
+          <!-- Hardware Actuators Closed-Loop State -->
+          <div class="card-asym-3 bg-[#FEFEFA] p-6 border border-[#DED8CF]/80 shadow-soft">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-heading font-bold text-lg text-[#2C2C24]">Closed-Loop Actuation</h3>
+              <span class="text-xs font-bold text-[#5D7052] flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Hardware Verified
+              </span>
+            </div>
+
+            <div class="space-y-4">
+              <!-- Valve Servo -->
+              <div class="p-4 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF] flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-[#78786C] uppercase">Emergency Cutoff Valve</div>
+                  <div class="font-heading font-bold text-base text-[#2C2C24]">Simulated Servo Motor</div>
+                </div>
+                <div class="text-right">
+                  <div id="actuator-servo-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-[#5D7052] text-white">
+                    90° (Open)
+                  </div>
+                  <div class="text-[10px] text-[#78786C] mt-1">Verified via feedback</div>
+                </div>
+              </div>
+
+              <!-- Water Pump -->
+              <div class="p-4 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF] flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-[#78786C] uppercase">Irrigation Pump</div>
+                  <div class="font-heading font-bold text-base text-[#2C2C24]">5V Relay Actuator</div>
+                </div>
+                <div class="text-right">
+                  <div id="actuator-pump-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-[#E6DCCD] text-[#4A4A40]">
+                    STOPPED
+                  </div>
+                  <div class="text-[10px] text-[#78786C] mt-1">Relay state confirmed</div>
+                </div>
+              </div>
+
+              <!-- Piezo Buzzer -->
+              <div class="p-4 rounded-2xl bg-[#F0EBE5]/60 border border-[#DED8CF] flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-[#78786C] uppercase">Acoustic Warning</div>
+                  <div class="font-heading font-bold text-base text-[#2C2C24]">Piezo Buzzer & Strobe</div>
+                </div>
+                <div class="text-right">
+                  <div id="actuator-alarm-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-[#E6DCCD] text-[#4A4A40]">
+                    OFF
+                  </div>
+                  <div class="text-[10px] text-[#78786C] mt-1">Silent</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SQLITE AUDIT LOGS SECTION -->
+      <div id="audit" class="mt-16 card-asym-1 bg-[#FEFEFA] p-8 border border-[#DED8CF]/80 shadow-soft">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#5D7052] mb-1">
+              <i data-lucide="database" class="w-3.5 h-3.5"></i>
+              <span>Immutable Local Compliance</span>
+            </div>
+            <h3 class="font-heading font-bold text-2xl text-[#2C2C24]">SQLite Action & Safety Audit Trail</h3>
+          </div>
+          <button onclick="fetchAuditLogs()" class="px-4 py-2 rounded-full text-xs font-bold bg-[#E6DCCD] hover:bg-[#5D7052] hover:text-white transition-all flex items-center gap-1.5">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh Audit Records
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-[#DED8CF] text-xs font-bold text-[#78786C] uppercase tracking-wider">
+                <th class="py-3 px-4">ID</th>
+                <th class="py-3 px-4">Time</th>
+                <th class="py-3 px-4">User</th>
+                <th class="py-3 px-4">Action</th>
+                <th class="py-3 px-4">Authorization</th>
+                <th class="py-3 px-4">Execution</th>
+                <th class="py-3 px-4">Hardware Verified</th>
+              </tr>
+            </thead>
+            <tbody id="audit-table-body" class="divide-y divide-[#DED8CF]/50 text-xs font-medium">
+              <!-- Dynamically populated -->
+              <tr>
+                <td colspan="7" class="py-6 text-center text-[#78786C]">Loading audit logs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- HOW IT WORKS (With Handcrafted Curved Dashed SVG Connector) -->
+    <section id="how-it-works" class="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C18C5D]/15 text-[#C18C5D] text-xs font-bold mb-4">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span>The Closed Product Loop</span>
+        </div>
+        <h2 class="font-heading font-bold text-4xl sm:text-5xl text-[#2C2C24]">
+          How BAT POD Works
+        </h2>
+        <p class="text-[#78786C] text-lg mt-3">
+          Five distinct phases guaranteeing intelligence without surrendering control to unverified AI.
+        </p>
+      </div>
+
+      <!-- 5-Step Grid with Curved Connector -->
+      <div class="grid md:grid-cols-5 gap-6 relative">
+        
+        <!-- Step 1 -->
+        <div class="card-asym-1 bg-[#FEFEFA] p-6 border border-[#DED8CF]/70 shadow-soft text-center group hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 rounded-full bg-[#5D7052]/10 text-[#5D7052] font-heading font-bold text-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-[#5D7052] group-hover:text-white transition-all">
+            1
+          </div>
+          <h4 class="font-heading font-bold text-base text-[#2C2C24] mb-1">SENSE</h4>
+          <p class="text-xs text-[#78786C]">Continuous telemetry from MQ Gas, Temp & Soil sensors.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card-asym-2 bg-[#FEFEFA] p-6 border border-[#DED8CF]/70 shadow-soft text-center group hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 rounded-full bg-[#5D7052]/10 text-[#5D7052] font-heading font-bold text-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-[#5D7052] group-hover:text-white transition-all">
+            2
+          </div>
+          <h4 class="font-heading font-bold text-base text-[#2C2C24] mb-1">UNDERSTAND</h4>
+          <p class="text-xs text-[#78786C]">Local intent parsing extracts structured goals from voice.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card-asym-3 bg-[#FEFEFA] p-6 border border-[#DED8CF]/70 shadow-soft text-center group hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 rounded-full bg-[#C18C5D]/15 text-[#C18C5D] font-heading font-bold text-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-[#C18C5D] group-hover:text-white transition-all">
+            3
+          </div>
+          <h4 class="font-heading font-bold text-base text-[#2C2C24] mb-1">DECIDE</h4>
+          <p class="text-xs text-[#78786C]">Deterministic rules evaluate safety & RBAC permissions.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="card-asym-4 bg-[#FEFEFA] p-6 border border-[#DED8CF]/70 shadow-soft text-center group hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 rounded-full bg-[#5D7052]/10 text-[#5D7052] font-heading font-bold text-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-[#5D7052] group-hover:text-white transition-all">
+            4
+          </div>
+          <h4 class="font-heading font-bold text-base text-[#2C2C24] mb-1">ACT</h4>
+          <p class="text-xs text-[#78786C]">Servo or pump activates only after explicit approval.</p>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="card-asym-1 bg-[#FEFEFA] p-6 border border-[#DED8CF]/70 shadow-soft text-center group hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 rounded-full bg-[#5D7052]/10 text-[#5D7052] font-heading font-bold text-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-[#5D7052] group-hover:text-white transition-all">
+            5
+          </div>
+          <h4 class="font-heading font-bold text-base text-[#2C2C24] mb-1">CONFIRM</h4>
+          <p class="text-xs text-[#78786C]">Physical verification confirms state before reporting.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CORE CAPABILITIES (FEATURES WITH ASYMMETRIC RADII & LUCIDE CONTAINERS) -->
+    <section id="features" class="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-[#F0EBE5]/30 rounded-[3rem] border border-[#DED8CF]/60 my-10">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#5D7052]/10 text-[#5D7052] text-xs font-bold mb-4">
+          <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+          <span>Architecture Highlights</span>
+        </div>
+        <h2 class="font-heading font-bold text-4xl sm:text-5xl text-[#2C2C24]">
+          Built for Physical Reality
+        </h2>
+        <p class="text-[#78786C] text-lg mt-3">
+          Designed from the ground up to solve the real dangers of hallucinating AI in physical spaces.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        
+        <!-- Feature 1 -->
+        <div class="card-asym-1 bg-[#FEFEFA] p-8 border border-[#DED8CF]/60 shadow-soft hover:-translate-y-1 transition-all">
+          <div class="h-14 w-14 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center mb-6 transition-colors duration-300 hover:bg-[#5D7052] hover:text-white">
+            <i data-lucide="zap-off" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-heading font-bold text-xl text-[#2C2C24] mb-2">100% Offline-First</h3>
+          <p class="text-sm text-[#78786C] leading-relaxed">
+            Internet outages must never disable safety. Gas detection, valve shutoff, and audit logging execute on local silicon without a single packet leaving the device.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="card-asym-2 bg-[#FEFEFA] p-8 border border-[#DED8CF]/60 shadow-soft hover:-translate-y-1 transition-all">
+          <div class="h-14 w-14 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center mb-6 transition-colors duration-300 hover:bg-[#5D7052] hover:text-white">
+            <i data-lucide="shield-check" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-heading font-bold text-xl text-[#2C2C24] mb-2">Dual-Brain Hardware</h3>
+          <p class="text-sm text-[#78786C] leading-relaxed">
+            Arduino Uno sensor hub manages deterministic analog loops and autonomous valve emergency fallbacks, while ESP32 drives the OLED, RFID, and voice gateway.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="card-asym-3 bg-[#FEFEFA] p-8 border border-[#DED8CF]/60 shadow-soft hover:-translate-y-1 transition-all">
+          <div class="h-14 w-14 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center mb-6 transition-colors duration-300 hover:bg-[#5D7052] hover:text-white">
+            <i data-lucide="user-check" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-heading font-bold text-xl text-[#2C2C24] mb-2">Human-in-the-Loop</h3>
+          <p class="text-sm text-[#78786C] leading-relaxed">
+            Physical operations require tactile confirmation. BAT POD calculates context, displays clear parameters, and waits for a physical touch before dispensing water.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="card-asym-4 bg-[#FEFEFA] p-8 border border-[#DED8CF]/60 shadow-soft hover:-translate-y-1 transition-all">
+          <div class="h-14 w-14 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center mb-6 transition-colors duration-300 hover:bg-[#5D7052] hover:text-white">
+            <i data-lucide="lock" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-heading font-bold text-xl text-[#2C2C24] mb-2">Role-Based Access (RBAC)</h3>
+          <p class="text-sm text-[#78786C] leading-relaxed">
+            Authenticated RFID identification separates Guests, Workers, and Admins. Strangers can query status but cannot command physical actuators.
+          </p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="card-asym-1 bg-[#FEFEFA] p-8 border border-[#DED8CF]/60 shadow-soft hover:-translate-y-1 transition-all">
+          <div class="h-14 w-14 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center mb-6 transition-colors duration-300 hover:bg-[#5D7052] hover:text-white">
+            <i data-lucide="check-check" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-heading font-bold text-xl text-[#2C2C24] mb-2">Hardware Verification</h3>
+          <p class="text-sm text-[#78786C] leading-relaxed">
+            Never declare success because a signal left the pin. Actuators confirm actual position before the voice synthesizes a confirmation report.
+          </p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="card-asym-2 bg-[#FEFEFA] p-8 border border-[#DED8CF]/60 shadow-soft hover:-translate-y-1 transition-all">
+          <div class="h-14 w-14 rounded-2xl bg-[#5D7052]/10 text-[#5D7052] flex items-center justify-center mb-6 transition-colors duration-300 hover:bg-[#5D7052] hover:text-white">
+            <i data-lucide="scroll" class="w-7 h-7"></i>
+          </div>
+          <h3 class="font-heading font-bold text-xl text-[#2C2C24] mb-2">Explainable Incident Memory</h3>
+          <p class="text-sm text-[#78786C] leading-relaxed">
+            Ask "What happened?" and BAT POD queries its SQLite log to accurately report who commanded what, what sensors detected, and why emergency procedures fired.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FAQ SECTION (Native Details/Summary with Smooth Interaction) -->
+    <section class="py-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="font-heading font-bold text-3xl sm:text-4xl text-[#2C2C24]">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-[#78786C] text-base mt-2">
+          Architecture, safety policies, and hardware setup details.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        
+        <details class="group bg-[#FEFEFA] border border-[#DED8CF] rounded-2xl p-6 transition-all duration-300">
+          <summary class="flex justify-between items-center font-heading font-bold text-lg text-[#2C2C24] cursor-pointer list-none">
+            <span>Can the LLM hallucinate and accidentally close or open the valve?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-[#5D7052] transition-transform duration-300 group-open:rotate-180"></i>
+          </summary>
+          <p class="text-sm text-[#78786C] mt-3 leading-relaxed">
+            No. The LLM is strictly restricted to linguistic parsing and natural speech generation. It outputs structured intent data which is subsequently verified by hardcoded deterministic rules, an RBAC permission matrix, and an explicit human-in-the-loop approval mechanism.
+          </p>
+        </details>
+
+        <details class="group bg-[#FEFEFA] border border-[#DED8CF] rounded-2xl p-6 transition-all duration-300">
+          <summary class="flex justify-between items-center font-heading font-bold text-lg text-[#2C2C24] cursor-pointer list-none">
+            <span>What happens during a gas leak emergency?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-[#5D7052] transition-transform duration-300 group-open:rotate-180"></i>
+          </summary>
+          <p class="text-sm text-[#78786C] mt-3 leading-relaxed">
+            When gas levels reach or exceed 300 PPM, BAT POD immediately triggers an emergency intervention. Unlike ordinary commands, emergency actions bypass human approval to close the valve servo in less than 1 second, sound the alarm, and log the incident to SQLite.
+          </p>
+        </details>
+
+        <details class="group bg-[#FEFEFA] border border-[#DED8CF] rounded-2xl p-6 transition-all duration-300">
+          <summary class="flex justify-between items-center font-heading font-bold text-lg text-[#2C2C24] cursor-pointer list-none">
+            <span>Can I test this without physical microcontrollers?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-[#5D7052] transition-transform duration-300 group-open:rotate-180"></i>
+          </summary>
+          <p class="text-sm text-[#78786C] mt-3 leading-relaxed">
+            Yes! The built-in Hardware Abstraction Layer (HAL) includes high-fidelity mock adapters for every sensor, servo, RFID reader, and OLED screen. You can run the entire Golden Path demo in simulation mode directly from this web console or via CLI.
+          </p>
+        </details>
+
+        <details class="group bg-[#FEFEFA] border border-[#DED8CF] rounded-2xl p-6 transition-all duration-300">
+          <summary class="flex justify-between items-center font-heading font-bold text-lg text-[#2C2C24] cursor-pointer list-none">
+            <span>Does it support Indian languages?</span>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-[#5D7052] transition-transform duration-300 group-open:rotate-180"></i>
+          </summary>
+          <p class="text-sm text-[#78786C] mt-3 leading-relaxed">
+            Yes. BAT POD includes Kannada phrase mappings for speech synthesis and recognition, with support for Sarvam AI speech models when an API key is configured.
+          </p>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- FINAL CALL TO ACTION (Organic Intimate Card) -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      <div class="card-asym-1 bg-[#5D7052] text-white p-10 sm:p-14 shadow-float relative overflow-hidden text-center">
+        <!-- Background Organic Blob -->
+        <div class="absolute -top-20 -right-20 w-80 h-80 bg-white/10 blob-shape-2 blur-2xl"></div>
+
+        <div class="relative z-10 max-w-2xl mx-auto space-y-6">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white text-xs font-bold">
+            <i data-lucide="sparkle" class="w-3.5 h-3.5"></i>
+            <span>Physical AI for Everyday Spaces</span>
+          </div>
+
+          <h2 class="font-heading font-extrabold text-4xl sm:text-5xl leading-tight">
+            Ready to bring grounded physical AI to your space?
+          </h2>
+
+          <p class="text-[#F3F4F1] text-base sm:text-lg opacity-90 font-light">
+            Deploy BAT POD to small farms, elder care homes, clinics, or laboratories. Senses the environment, respects authorization, and acts safely.
+          </p>
+
+          <div class="flex flex-wrap justify-center gap-4 pt-4">
+            <button onclick="scrollToConsole()" class="px-8 h-12 rounded-full bg-white text-[#5D7052] font-bold text-base shadow hover:bg-[#F3F4F1] hover:scale-105 active:scale-95 transition-all">
+              Try Interactive Monitor
+            </button>
+            <a href="https://github.com/sufiyan-cyber/iqoo_GF" target="_blank" class="px-8 h-12 rounded-full border-2 border-white/80 text-white font-bold text-base hover:bg-white/10 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+              <i data-lucide="github" class="w-4 h-4"></i>
+              GitHub Repository
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ORGANIC FOOTER -->
+  <footer class="border-t border-[#DED8CF] py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mt-20">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-full bg-[#5D7052] flex items-center justify-center text-white">
+          <i data-lucide="shield-leaf" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <span class="font-heading font-bold text-lg text-[#2C2C24]">BAT POD</span>
+          <span class="text-xs text-[#78786C] block font-medium">Physical AI Companion • Smart Living</span>
+        </div>
+      </div>
+
+      <div class="text-xs text-[#78786C] text-center">
+        Built with the <span class="font-bold text-[#5D7052]">Organic Natural</span> design philosophy. Wabi-Sabi tactile interface.
+      </div>
+
+      <div class="flex items-center gap-4 text-[#78786C]">
+        <a href="https://github.com/sufiyan-cyber/iqoo_GF" target="_blank" class="h-10 w-10 rounded-full bg-[#F0EBE5] flex items-center justify-center hover:bg-[#5D7052] hover:text-white transition-all">
+          <i data-lucide="github" class="w-4 h-4"></i>
+        </a>
+        <button onclick="scrollToConsole()" class="h-10 w-10 rounded-full bg-[#F0EBE5] flex items-center justify-center hover:bg-[#5D7052] hover:text-white transition-all" title="Back to Top">
+          <i data-lucide="arrow-up" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- CLIENT-SIDE SCRIPTING & LIVE TELEMETRY LOGIC -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Client State
+    let clientState = {
+      temp: 26.0,
+      gas: 42.0,
+      soil: 21.0,
+      user: "Bruce Wayne",
+      role: "admin",
+      servo: "90_DEG",
+      pump: "STOPPED",
+      alarm: "OFF",
+      displayState: "NORMAL",
+      pendingApproval: null,
+      isApiConnected: false
+    };
+
+    function scrollToConsole() {
+      document.getElementById('monitor').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Poll live status from backend if available
+    async function syncBackendStatus() {
+      try {
+        const res = await fetch('/api/status');
+        if (res.ok) {
+          const data = await res.json();
+          clientState.isApiConnected = true;
+          document.getElementById('conn-badge').classList.remove('hidden');
+
+          if (data.snapshot) {
+            if (data.snapshot.temperature) clientState.temp = data.snapshot.temperature.value;
+            if (data.snapshot.gas) clientState.gas = data.snapshot.gas.value;
+            if (data.snapshot.soil_moisture) clientState.soil = data.snapshot.soil_moisture.value;
+          }
+          if (data.user) {
+            clientState.user = data.user.name;
+            clientState.role = data.user.role;
+          }
+          if (data.actuators) {
+            clientState.servo = data.actuators.servo;
+            clientState.pump = data.actuators.pump;
+            clientState.alarm = data.actuators.alarm;
+          }
+          if (data.display) {
+            clientState.displayState = data.display.state.toUpperCase();
+            if (data.display.screen_text) {
+              document.getElementById('oled-screen-ascii').textContent = data.display.screen_text;
+            }
+          }
+          clientState.pendingApproval = data.pending_approval;
+          updateUI();
+        }
+      } catch (err) {
+        // Fallback to standalone interactive simulation
+        clientState.isApiConnected = false;
+      }
+    }
+
+    function updateUI() {
+      // Numbers
+      document.getElementById('card-temp-val').textContent = clientState.temp.toFixed(1) + '°C';
+      document.getElementById('card-gas-val').textContent = clientState.gas.toFixed(1) + ' PPM';
+      document.getElementById('card-soil-val').textContent = clientState.soil.toFixed(1) + '%';
+
+      document.getElementById('hero-temp').textContent = clientState.temp.toFixed(1) + '°C';
+      document.getElementById('hero-soil').textContent = clientState.soil.toFixed(1) + '%';
+      document.getElementById('hero-user-badge').textContent = `RFID: ${clientState.role} (${clientState.user.split(' ')[0]})`;
+      document.getElementById('active-user-pill').textContent = `Active: ${clientState.user} (${clientState.role})`;
+
+      // Gas Hazard check
+      const gasCard = document.getElementById('gas-card');
+      const gasBadge = document.getElementById('card-gas-badge');
+      const emergencyBanner = document.getElementById('emergency-banner');
+
+      if (clientState.gas >= 300) {
+        gasBadge.textContent = 'CRITICAL HAZARD (≥ 300 PPM)';
+        gasBadge.className = 'text-xs font-bold text-[#A85448] mt-2 animate-pulse';
+        document.getElementById('hero-gas').textContent = 'HAZARD (' + clientState.gas.toFixed(1) + ' PPM)';
+        document.getElementById('hero-gas').className = 'text-red-400 font-bold';
+        document.getElementById('hero-status').textContent = 'GAS LEAK DETECTED';
+        document.getElementById('hero-status').className = 'text-red-400 font-semibold';
+        emergencyBanner.classList.remove('hidden');
+
+        // Safe state actuator triggers
+        clientState.servo = '0_DEG';
+        clientState.alarm = 'ON';
+        clientState.displayState = 'EMERGENCY';
+      } else if (clientState.gas >= 150) {
+        gasBadge.textContent = 'WARNING: Elevated Gas';
+        gasBadge.className = 'text-xs font-bold text-[#C18C5D] mt-2';
+        document.getElementById('hero-gas').textContent = 'WARNING (' + clientState.gas.toFixed(1) + ' PPM)';
+        document.getElementById('hero-gas').className = 'text-amber-400 font-bold';
+        emergencyBanner.classList.add('hidden');
+      } else {
+        gasBadge.textContent = 'SAFE (< 150 PPM)';
+        gasBadge.className = 'text-xs font-bold text-[#5D7052] mt-2';
+        document.getElementById('hero-gas').textContent = 'SAFE (' + clientState.gas.toFixed(1) + ' PPM)';
+        document.getElementById('hero-gas').className = 'text-[#5D7052] font-bold';
+        document.getElementById('hero-status').textContent = 'Everything OK';
+        document.getElementById('hero-status').className = 'text-emerald-400 font-semibold';
+        emergencyBanner.classList.add('hidden');
+      }
+
+      // Actuators
+      document.getElementById('hero-servo').textContent = clientState.servo === '0_DEG' ? '0° (Closed)' : '90° (Open)';
+      document.getElementById('hero-pump').textContent = clientState.pump === 'RUNNING' ? 'Running' : 'Ready';
+      document.getElementById('hero-alarm').textContent = clientState.alarm;
+
+      document.getElementById('actuator-servo-badge').textContent = clientState.servo === '0_DEG' ? '0° (Closed)' : '90° (Open)';
+      document.getElementById('actuator-servo-badge').className = clientState.servo === '0_DEG' ? 'px-3 py-1 rounded-full text-xs font-bold bg-[#A85448] text-white' : 'px-3 py-1 rounded-full text-xs font-bold bg-[#5D7052] text-white';
+
+      document.getElementById('actuator-pump-badge').textContent = clientState.pump;
+      document.getElementById('actuator-pump-badge').className = clientState.pump === 'RUNNING' ? 'px-3 py-1 rounded-full text-xs font-bold bg-[#5D7052] text-white animate-pulse' : 'px-3 py-1 rounded-full text-xs font-bold bg-[#E6DCCD] text-[#4A4A40]';
+
+      document.getElementById('actuator-alarm-badge').textContent = clientState.alarm;
+      document.getElementById('actuator-alarm-badge').className = clientState.alarm === 'ON' ? 'px-3 py-1 rounded-full text-xs font-bold bg-[#A85448] text-white animate-bounce' : 'px-3 py-1 rounded-full text-xs font-bold bg-[#E6DCCD] text-[#4A4A40]';
+
+      document.getElementById('oled-state-tag').textContent = clientState.displayState + ' STATE';
+
+      // Pending Approval Banner
+      const approvalBanner = document.getElementById('approval-banner');
+      if (clientState.pendingApproval) {
+        approvalBanner.classList.remove('hidden');
+        document.getElementById('approval-prompt-text').textContent = `Water plant? Current soil moisture is ${clientState.soil.toFixed(1)}%.`;
+      } else {
+        approvalBanner.classList.add('hidden');
+      }
+
+      lucide.createIcons();
+    }
+
+    async function setSensorVal(type, val) {
+      val = parseFloat(val);
+      if (type === 'gas') clientState.gas = val;
+      if (type === 'temp') clientState.temp = val;
+      if (type === 'soil') clientState.soil = val;
+
+      updateUI();
+
+      if (clientState.isApiConnected) {
+        try {
+          await fetch('/api/sensor/set', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ sensor_type: type, value: val })
+          });
+          syncBackendStatus();
+          fetchAuditLogs();
+        } catch (e) {}
+      }
+    }
+
+    function resetGasSimulation() {
+      setSensorVal('gas', 42.0);
+      clientState.servo = '90_DEG';
+      clientState.alarm = 'OFF';
+      clientState.displayState = 'NORMAL';
+      updateUI();
+    }
+
+    async function tapCard(cardId) {
+      if (cardId === 'CARD_ADMIN_001') {
+        clientState.user = "Bruce Wayne";
+        clientState.role = "admin";
+      } else if (cardId === 'CARD_WORKER_002') {
+        clientState.user = "Alfred Pennyworth";
+        clientState.role = "worker";
+      } else {
+        clientState.user = "Guest Visitor";
+        clientState.role = "guest";
+      }
+      updateUI();
+
+      if (clientState.isApiConnected) {
+        try {
+          await fetch('/api/tap', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ card_id: cardId })
+          });
+          syncBackendStatus();
+        } catch (e) {}
+      }
+
+      document.getElementById('voice-response-text').textContent = `RFID Card scanned: Identified as ${clientState.user} (${clientState.role}).`;
+    }
+
+    async function sendVoiceText(text) {
+      document.getElementById('voice-input').value = text;
+      
+      if (clientState.isApiConnected) {
+        try {
+          const res = await fetch('/api/say', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ text: text })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            document.getElementById('voice-response-text').textContent = `"${data.response}"`;
+            syncBackendStatus();
+            fetchAuditLogs();
+            return;
+          }
+        } catch (e) {}
+      }
+
+      // Standalone simulation fallback
+      const lower = text.toLowerCase();
+      if (lower.includes('safe')) {
+        document.getElementById('voice-response-text').textContent = 
+          `"Temperature is normal at ${clientState.temp.toFixed(1)}°C. Soil moisture is ${clientState.soil < 25 ? 'low' : 'adequate'}. No hazardous gas detected. Everything is safe."`;
+      } else if (lower.includes('water')) {
+        if (clientState.role === 'guest') {
+          document.getElementById('voice-response-text').textContent = 
+            `"Access Denied: Guest users are not permitted to trigger physical actuators (water_plant). Please tap an authorized RFID card."`;
+        } else {
+          clientState.pendingApproval = { action: 'water_plant' };
+          document.getElementById('voice-response-text').textContent = 
+            `"Water the plant? Current soil moisture is ${clientState.soil.toFixed(1)}%. Please approve using the touch button or voice."`;
+          clientState.displayState = 'APPROVAL';
+        }
+      } else if (lower.includes('what happened')) {
+        document.getElementById('voice-response-text').textContent = 
+          `"At recent checkpoint, sensor monitoring and safety rules verified environmental stability. Most recent event logged in SQLite database."`;
+      } else {
+        document.getElementById('voice-response-text').textContent = 
+          `"I understood '${text}'. All safety policies evaluated."`;
+      }
+      updateUI();
+    }
+
+    function handleVoiceSubmit(e) {
+      e.preventDefault();
+      const val = document.getElementById('voice-input').value.trim();
+      if (val) sendVoiceText(val);
+    }
+
+    async function submitApproval(approved) {
+      clientState.pendingApproval = null;
+
+      if (approved) {
+        clientState.pump = 'RUNNING';
+        clientState.servo = '90_DEG';
+        clientState.soil = Math.min(100, clientState.soil + 20);
+        document.getElementById('voice-response-text').textContent = 
+          `"Plant watered successfully. Physical action verified."`;
+        setTimeout(() => {
+          clientState.pump = 'STOPPED';
+          updateUI();
+        }, 3000);
+      } else {
+        document.getElementById('voice-response-text').textContent = `"Action cancelled by user."`;
+      }
+
+      clientState.displayState = 'NORMAL';
+      updateUI();
+
+      if (clientState.isApiConnected) {
+        try {
+          await fetch('/api/approve', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ approved: approved })
+          });
+          syncBackendStatus();
+          fetchAuditLogs();
+        } catch (e) {}
+      }
+    }
+
+    async function runAutoGoldenPath() {
+      scrollToConsole();
+      sendVoiceText("Is the environment safe?");
+      setTimeout(() => {
+        sendVoiceText("Water the plant.");
+        setTimeout(() => {
+          submitApproval(true);
+          setTimeout(() => {
+            setSensorVal('gas', 350);
+            setTimeout(() => {
+              sendVoiceText("What happened?");
+            }, 2500);
+          }, 3000);
+        }, 2000);
+      }, 1500);
+    }
+
+    async function fetchAuditLogs() {
+      const tbody = document.getElementById('audit-table-body');
+      try {
+        const res = await fetch('/api/audit?limit=6');
+        if (res.ok) {
+          const records = await res.json();
+          if (records.length > 0) {
+            tbody.innerHTML = records.map(r => `
+              <tr class="hover:bg-black/5 transition-colors">
+                <td class="py-3 px-4 font-bold text-[#78786C]">#${r.id}</td>
+                <td class="py-3 px-4 text-[#78786C]">${r.timestamp.split('T')[1].substring(0, 8)}</td>
+                <td class="py-3 px-4 font-bold text-[#2C2C24]">${r.user}</td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full bg-[#E6DCCD] font-mono text-[11px]">${r.requested_action}</span></td>
+                <td class="py-3 px-4 text-xs font-semibold ${r.authorization.includes('emergency') ? 'text-[#A85448]' : 'text-[#5D7052]'}">${r.authorization}</td>
+                <td class="py-3 px-4 font-bold ${r.execution_result === 'success' ? 'text-[#5D7052]' : 'text-[#A85448]'}">${r.execution_result}</td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${r.verification_result === 'verified_success' ? 'bg-[#5D7052]/15 text-[#5D7052]' : 'bg-[#A85448]/15 text-[#A85448]'}">${r.verification_result}</span></td>
+              </tr>
+            `).join('');
+            return;
+          }
+        }
+      } catch (e) {}
+
+      // Fallback sample audit log if backend offline
+      tbody.innerHTML = `
+        <tr class="hover:bg-black/5">
+          <td class="py-3 px-4 font-bold text-[#78786C]">#2</td>
+          <td class="py-3 px-4 text-[#78786C]">15:48:38</td>
+          <td class="py-3 px-4 font-bold text-[#2C2C24]">SAFETY_DAEMON</td>
+          <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full bg-[#E6DCCD] font-mono text-[11px]">close_valve</span></td>
+          <td class="py-3 px-4 text-xs font-semibold text-[#A85448]">emergency_override</td>
+          <td class="py-3 px-4 font-bold text-[#5D7052]">success</td>
+          <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#5D7052]/15 text-[#5D7052]">verified_success</span></td>
+        </tr>
+        <tr class="hover:bg-black/5">
+          <td class="py-3 px-4 font-bold text-[#78786C]">#1</td>
+          <td class="py-3 px-4 text-[#78786C]">15:48:38</td>
+          <td class="py-3 px-4 font-bold text-[#2C2C24]">Bruce Wayne</td>
+          <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full bg-[#E6DCCD] font-mono text-[11px]">water_plant</span></td>
+          <td class="py-3 px-4 text-xs font-semibold text-[#5D7052]">approved:admin</td>
+          <td class="py-3 px-4 font-bold text-[#5D7052]">success</td>
+          <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#5D7052]/15 text-[#5D7052]">verified_success</span></td>
+        </tr>
+      `;
+    }
+
+    // Initialize
+    syncBackendStatus();
+    fetchAuditLogs();
+    setInterval(syncBackendStatus, 2500);
+  </script>
+</body>
+</html>
